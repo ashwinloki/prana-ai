@@ -35,29 +35,37 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Send request to backend
-    response = requests.post(
-        "https://prana-ai-production.up.railway.app/chat",
-        json={
-            "message": user_input,
-            "history": st.session_state.messages
-        }
-    )
+    try:
 
-    if response.status_code == 200:
-
-        data = response.json()
-
-        ai_response = data.get(
-            "response",
-            "Error getting AI response"
+        # Send request to backend
+        response = requests.post(
+            "https://prana-ai-production.up.railway.app/chat",
+            json={
+                "message": user_input,
+                "history": st.session_state.messages
+            }
         )
 
-else:
+        if response.status_code == 200:
 
-    ai_response = (
-        f"Server Error: {response.status_code}"
-    )
+            data = response.json()
+
+            ai_response = data.get(
+                "response",
+                "Error getting AI response"
+            )
+
+        else:
+
+            ai_response = (
+                f"Server Error: {response.status_code}"
+            )
+
+    except Exception as e:
+
+        ai_response = (
+            f"Connection Error: {str(e)}"
+        )
 
     # Store AI response
     st.session_state.messages.append(
