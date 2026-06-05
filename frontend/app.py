@@ -37,18 +37,26 @@ if user_input:
 
     # Send request to backend
     response = requests.post(
-        "http://127.0.0.1:8000/chat",
+        "https://prana-ai-production.up.railway.app/chat",
         json={
             "message": user_input,
             "history": st.session_state.messages
         }
     )
 
-    data = response.json()
+    if response.status_code == 200:
 
-    ai_response = data.get(
-        "response",
-        "Error getting AI response"
+        data = response.json()
+
+        ai_response = data.get(
+            "response",
+            "Error getting AI response"
+        )
+
+else:
+
+    ai_response = (
+        f"Server Error: {response.status_code}"
     )
 
     # Store AI response
